@@ -49,14 +49,14 @@ export async function POST(request: Request) {
   try {
     const checkout = await polar.checkouts.create({
       products: [productId],
-      externalCustomerId: user?.id,
-      customerEmail: user?.email ?? undefined,
+      externalCustomerId: user?.id ?? undefined,
       successUrl: `${origin}/billing?checkout=success`,
       metadata: { userId: user?.id ?? "", targetPlan: targetPlan ?? "GROWTH" },
     });
     return NextResponse.json({ url: checkout.url });
-  } catch (error) {
-    console.error("Polar checkout failed:", error);
-    return NextResponse.json({ error: "Could not start checkout" }, { status: 502 });
+  } catch (error: any) {
+    console.error("Polar checkout failed:", JSON.stringify(error, null, 2));
+    const message = error?.message ?? "Could not start checkout";
+    return NextResponse.json({ error: message, status: error?.statusCode }, { status: 502 });
   }
 }

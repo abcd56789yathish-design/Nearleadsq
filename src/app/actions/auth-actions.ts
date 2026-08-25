@@ -40,6 +40,9 @@ export async function signUp(
       email,
       passwordHash,
       name,
+      workspaces: {
+        create: { name: "My workspace" },
+      },
       templates: {
         create: DEFAULT_TEMPLATES.map((template) => ({
           name: template.name,

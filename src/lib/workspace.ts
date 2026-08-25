@@ -1,11 +1,14 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
 export const WORKSPACE_COOKIE = "lp_ws";
 
 export async function listWorkspaces(userId: string) {
+  const userExists = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!userExists) redirect("/login");
   return db.workspace.findMany({
     where: { userId },
     orderBy: { createdAt: "asc" },
