@@ -14,7 +14,7 @@ model User {
   passwordHash     String
   name             String?
   plan             String     @default("FREE") // FREE | GROWTH | AGENCY
-  stripeCustomerId String?
+  polarCustomerId  String?
   createdAt        DateTime   @default(now())
   searches         Search[]
   leads            Lead[]

@@ -84,10 +84,10 @@ export function isPaidPlan(plan: Plan): boolean {
   return plan === "GROWTH" || plan === "AGENCY";
 }
 
-/** Map a Stripe price ID to a plan tier. */
-export function planForPriceId(priceId: string): Plan {
-  if (priceId === process.env.STRIPE_PRICE_GROWTH) return "GROWTH";
-  if (priceId === process.env.STRIPE_PRICE_AGENCY) return "AGENCY";
+/** Map a Polar product ID to a plan tier. */
+export function planForProductId(productId: string): Plan {
+  if (productId === process.env.POLAR_PRODUCT_GROWTH) return "GROWTH";
+  if (productId === process.env.POLAR_PRODUCT_AGENCY) return "AGENCY";
   return "FREE";
 }
 

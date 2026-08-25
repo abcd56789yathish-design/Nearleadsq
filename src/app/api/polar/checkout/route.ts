@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { getStripe, isBillingConfigured } from "@/lib/stripe";
+import { getPolar, isBillingConfigured } from "@/lib/polar";
 import { isPaidPlan, planOf } from "@/lib/plans";
 
 export async function POST(request: Request) {
@@ -18,42 +18,45 @@ export async function POST(request: Request) {
 
   const user = await db.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, email: true, stripeCustomerId: true, plan: true },
+    select: { id: true, email: true, plan: true },
   });
   if (isPaidPlan(planOf(user?.plan))) {
     return NextResponse.json({ error: "You already have an active subscription" }, { status: 400 });
   }
 
-  const { targetPlan } = await request.json().catch(() => ({})) as { targetPlan?: string };
-  const priceId =
+  const { targetPlan } = (await request.json().catch(() => ({}))) as {
+    targetPlan?: string;
+  };
+  const productId =
     targetPlan === "AGENCY"
-      ? process.env.STRIPE_PRICE_AGENCY
-      : process.env.STRIPE_PRICE_GROWTH;
+      ? process.env.POLAR_PRODUCT_AGENCY
+      : process.env.POLAR_PRODUCT_GROWTH;
 
-  if (!priceId) {
+  if (!productId) {
     return NextResponse.json(
       { error: "The selected plan is not available on this deployment" },
       { status: 503 }
     );
   }
 
+  const polar = getPolar();
+  if (!polar) {
+    return NextResponse.json({ error: "Polar client not available" }, { status: 500 });
+  }
+
   const origin = new URL(request.url).origin;
-  const sessionParams = {
-    mode: "subscription" as const,
-    client_reference_id: user?.id,
-    customer: user?.stripeCustomerId ?? undefined,
-    customer_email: user?.stripeCustomerId ? undefined : (user?.email ?? undefined),
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/billing?checkout=success`,
-    cancel_url: `${origin}/billing?checkout=cancelled`,
-    allow_promotion_codes: true,
-  };
 
   try {
-    const checkout = await getStripe()!.checkout.sessions.create(sessionParams);
+    const checkout = await polar.checkouts.create({
+      products: [productId],
+      externalCustomerId: user?.id,
+      customerEmail: user?.email ?? undefined,
+      successUrl: `${origin}/billing?checkout=success`,
+      metadata: { userId: user?.id ?? "", targetPlan: targetPlan ?? "GROWTH" },
+    });
     return NextResponse.json({ url: checkout.url });
   } catch (error) {
-    console.error("Stripe checkout failed:", error);
+    console.error("Polar checkout failed:", error);
     return NextResponse.json({ error: "Could not start checkout" }, { status: 502 });
   }
 }

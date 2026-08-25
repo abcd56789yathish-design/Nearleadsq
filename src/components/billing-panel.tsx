@@ -19,7 +19,7 @@ export function BillingActions({
     setPending(kind);
     setError(null);
     try {
-      const res = await fetch(`/api/stripe/${kind}`, {
+      const res = await fetch(`/api/polar/${kind}`, {
         method: "POST",
         ...(kind === "checkout" && targetPlan
           ? { body: JSON.stringify({ targetPlan }), headers: { "Content-Type": "application/json" } }
@@ -40,11 +40,11 @@ export function BillingActions({
 
   if (!configured) {
     return (
-        <p className="rounded-md bg-warning/10 px-3 py-2 text-sm text-warning">
-          Billing isn&apos;t configured on this deployment yet — set{" "}
-        <code className="font-mono">STRIPE_SECRET_KEY</code>,{" "}
-        <code className="font-mono">STRIPE_PRICE_GROWTH</code>, and{" "}
-        <code className="font-mono">STRIPE_PRICE_AGENCY</code> to enable upgrades.
+      <p className="rounded-md bg-warning/10 px-3 py-2 text-sm text-warning">
+        Billing isn&apos;t configured on this deployment yet — set{" "}
+        <code className="font-mono">POLAR_ACCESS_TOKEN</code>,{" "}
+        <code className="font-mono">POLAR_PRODUCT_GROWTH</code>, and{" "}
+        <code className="font-mono">POLAR_PRODUCT_AGENCY</code> to enable upgrades.
       </p>
     );
   }

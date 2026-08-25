@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireWorkspace } from "@/lib/workspace";
 import { getLeadQuota, PLANS, isPaidPlan, planOf } from "@/lib/plans";
 import { db } from "@/lib/db";
-import { isBillingConfigured } from "@/lib/stripe";
+import { isBillingConfigured } from "@/lib/polar";
 import {
   Card,
   CardContent,
@@ -36,12 +36,12 @@ export default async function BillingPage({
     <div className="max-w-3xl">
       <h1 className="text-2xl font-bold tracking-tight">Billing</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Your plan and usage. Upgrades are handled securely by Stripe.
+        Your plan and usage. Upgrades are handled securely by Polar.
       </p>
 
       {checkout === "success" && (
         <p className="mt-4 rounded-md bg-success/10 px-3 py-2 text-sm text-success">
-          Payment received — your subscription activates as soon as Stripe confirms it
+          Payment received — your subscription activates as soon as Polar confirms it
           (usually a few seconds; refresh to see your updated plan).
         </p>
       )}
