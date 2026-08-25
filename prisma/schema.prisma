@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String     @id @default(cuid())
+  email            String     @unique
+  passwordHash     String
+  name             String?
+  plan             String     @default("FREE") // FREE | GROWTH | AGENCY
+  stripeCustomerId String?
+  createdAt        DateTime   @default(now())
+  searches         Search[]
+  leads            Lead[]
+  templates        Template[]
+  workspaces       Workspace[]
+}
+
+model Workspace {
+  id         String     @id @default(cuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  createdAt  DateTime   @default(now())
+  searches   Search[]
+  leads      Lead[]
+  templates  Template[]
+  jobs       EnrichmentJob[]
+
+  @@index([userId, createdAt])
+}
+
+model Search {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  query       String
+  lat         Float
+  lng         Float
+  countryCode String?
+  category    String
+  radiusKm    Int      @default(5)
+  createdAt   DateTime @default(now())
+  leads       Lead[]
+
+  @@index([userId, createdAt])
+}
+
+model Lead {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId  String?
+  workspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  searchId     String?
+  search       Search?   @relation(fields: [searchId], references: [id], onDelete: Cascade)
+  osmId        String
+  osmType      String    @default("node")
+  name         String
+  category     String?
+  address      String?
+  phone        String?
+  phoneE164    String?
+  website      String?
+  email        String?
+  emailSource  String?
+  lat          Float?
+  lng          Float?
+  openingHours String?
+  status       String    @default("NEW")
+  notes        String?
+  contactedAt  DateTime?
+  followUpAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  activities   LeadActivity[]
+
+  @@unique([userId, osmId])
+  @@index([userId, status])
+  @@index([userId, searchId])
+}
+
+model Template {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  body        String
+  isDefault   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+
+  @@index([userId])
+}
+
+model LeadActivity {
+  id        String   @id @default(cuid())
+  userId    String
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model EnrichmentJob {
+  id          String     @id @default(cuid())
+  userId      String
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  status      String     @default("PENDING")
+  leadIds     String     @default("[]")
+  total       Int        @default(0)
+  processed   Int        @default(0)
+  found       Int        @default(0)
+  error       String?
+  createdAt   DateTime   @default(now())
+  finishedAt  DateTime?
+
+  @@index([userId, createdAt])
+}
