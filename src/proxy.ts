@@ -61,7 +61,7 @@ function getRateLimitConfig(pathname: string): { limit: number; windowMs: number
   return null;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!pathname.startsWith("/api/")) {
