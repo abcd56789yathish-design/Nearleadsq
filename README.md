@@ -57,26 +57,32 @@ prisma/seed.mjs             demo data seeder
 
 ## Deployment notes
 
-### 1. Switch to Postgres (recommended for production)
+### 1. Database (Postgres required on serverless)
 
-The default SQLite file database is great locally but doesn't survive
-serverless/multi-instance deploys. To move to Postgres:
+The schema uses Postgres. Provision a managed instance (Neon, Supabase, RDS…),
+set `DATABASE_URL` to your connection string (`?sslmode=require` where needed),
+then run `npx prisma db push && npm run db:seed` once against the new DB.
 
-1. Provision a managed Postgres (Neon, Supabase, RDS…)
-2. In `prisma/schema.prisma` change `provider = "sqlite"` → `"postgresql"`
-3. Set `DATABASE_URL` to your connection string (`?sslmode=require` where needed)
-4. Run `npx prisma db push` against the new database and redeploy
+### 2. Background enrichment (Vercel / serverless)
 
-### 2. Deploy
+Email enrichment runs as an **Inngest** background job (it can't run
+fire-and-forget inside a serverless function). On Vercel:
 
-**Vercel (or any Node host):**
+- Add `src/app/api/inngest/route.ts` (already present) — the Inngest endpoint.
+- Set `INNGEST_SIGNING_KEY` / `INNGEST_EVENT_KEY`.
+- In the **Inngest dashboard**, register your app so the `enrich/run` function
+  is picked up and executed by Inngest's workers.
 
-- Push the repo, import it into Vercel
-- Add env vars: `DATABASE_URL`, `AUTH_SECRET` (32+ random chars)
-- Run `npx prisma db push` once from your machine/CI against the prod DB
-  (or add a release step if your platform supports one)
+### 3. Deploy
 
-**Docker / VPS:**
+**Vercel:**
+
+- Push and import the repo into Vercel.
+- Add env vars: `DATABASE_URL`, `AUTH_SECRET`, `INNGEST_SIGNING_KEY`,
+  `INNGEST_EVENT_KEY` (plus Polar vars if enabled).
+- Run `npx prisma db push` once from your machine/CI against the prod DB.
+
+**Docker / VPS (non-serverless):**
 
 ```bash
 docker build -t nearleadsq .
@@ -88,13 +94,14 @@ docker run -d -p 3000:3000 \
 docker exec <container> npx prisma db push
 ```
 
-### 3. Environment variables
+### 4. Environment variables
 
 - `DATABASE_URL`, `AUTH_SECRET` — required
-- Billing (optional): `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`,
-  `STRIPE_WEBHOOK_SECRET`; point a Stripe webhook at
-  `/api/stripe/webhook` (events: `checkout.session.completed`,
-  `customer.subscription.*`)
+- `INNGEST_SIGNING_KEY`, `INNGEST_EVENT_KEY` — required for enrichment
+- Billing (optional): `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`,
+  `POLAR_PRODUCT_GROWTH`, `POLAR_PRODUCT_AGENCY`, `POLAR_SERVER`;
+  point a Polar webhook at `/api/polar/webhook` (events:
+  `subscription.created`, `subscription.updated`, `subscription.canceled`)
 
 ## Compliance notes
 

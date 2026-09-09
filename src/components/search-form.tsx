@@ -12,13 +12,23 @@ import { CATEGORIES, CATEGORY_GROUPS } from "@/lib/categories";
 
 const RADIUS_OPTIONS = [2, 5, 10, 20, 30];
 
-export function SearchForm() {
+export function SearchForm({ searchCap = 50 }: { searchCap?: number }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("restaurant");
   const [radiusKm, setRadiusKm] = useState(5);
+  const [maxLeads, setMaxLeads] = useState(Math.min(20, searchCap));
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function handleLeadCountChange(value: string) {
+    const raw = Number(value);
+    if (Number.isNaN(raw) || !value) {
+      setMaxLeads(1);
+      return;
+    }
+    setMaxLeads(Math.min(Math.max(1, Math.trunc(raw)), searchCap));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,7 +38,7 @@ export function SearchForm() {
       const res = await fetch("/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, category, radiusKm }),
+        body: JSON.stringify({ query, category, radiusKm, maxLeads }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -66,7 +76,7 @@ export function SearchForm() {
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="category">Category</Label>
               <Select
@@ -100,6 +110,21 @@ export function SearchForm() {
                   </option>
                 ))}
               </Select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="maxLeads">Leads to find</Label>
+              <Input
+                id="maxLeads"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={searchCap}
+                value={maxLeads}
+                onChange={(e) => handleLeadCountChange(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Up to {searchCap} leads per search.
+              </p>
             </div>
           </div>
 

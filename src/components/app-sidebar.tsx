@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import {
   Check,
   CreditCard,
+  FolderSearch,
   LayoutDashboard,
   Menu,
   Plus,
@@ -28,6 +29,7 @@ import { Input } from "@/components/ui/input";
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/search", label: "New search", icon: Search },
+  { href: "/searches", label: "Searches", icon: FolderSearch },
   { href: "/leads", label: "Leads", icon: Users },
   { href: "/templates", label: "Templates", icon: MessageSquareText },
   { href: "/billing", label: "Billing", icon: CreditCard },

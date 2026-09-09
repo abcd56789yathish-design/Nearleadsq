@@ -9,22 +9,7 @@ const PROGRESS_UPDATE_EVERY = 3;
  * Processes leads with a small concurrency pool and updates
  * progress counters in the DB so the UI can poll them.
  */
-export function startEnrichmentJob(jobId: string) {
-  void processJob(jobId).catch(async (error) => {
-    await db.enrichmentJob
-      .update({
-        where: { id: jobId },
-        data: {
-          status: "FAILED",
-          error: error instanceof Error ? error.message : "Unknown error",
-          finishedAt: new Date(),
-        },
-      })
-      .catch(() => undefined);
-  });
-}
-
-async function processJob(jobId: string) {
+export async function processJob(jobId: string) {
   // Claim the job exactly once.
   const claimed = await db.enrichmentJob.updateMany({
     where: { id: jobId, status: "PENDING" },

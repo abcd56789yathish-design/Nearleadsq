@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/workspace";
-import { QUOTA_MESSAGES, getLeadQuota } from "@/lib/plans";
+import { PLANS, QUOTA_MESSAGES, getLeadQuota } from "@/lib/plans";
 import { geocode } from "@/lib/geocode";
 import { searchBusinesses } from "@/lib/overpass";
 import { CATEGORIES } from "@/lib/categories";
@@ -12,6 +12,7 @@ const bodySchema = z.object({
   query: z.string().trim().min(2).max(200),
   category: z.string().refine((key) => key in CATEGORIES, "Unknown category"),
   radiusKm: z.number().int().min(1).max(50),
+  maxLeads: z.number().int().min(1).max(500).default(20),
 });
 
 export async function POST(request: Request) {
@@ -36,13 +37,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const { query, category, radiusKm } = parsed.data;
+  const { query, category, radiusKm, maxLeads: requestedLeads } = parsed.data;
   const def = CATEGORIES[category];
 
   const quota = await getLeadQuota(ctx.userId);
   if (quota.blocked) {
     return NextResponse.json({ error: QUOTA_MESSAGES.leads }, { status: 402 });
   }
+  const searchCap = PLANS[quota.plan].searchLeadLimit;
+  const maxLeads = Math.min(requestedLeads, searchCap);
 
   try {
     const geo = await geocode(query);
@@ -64,6 +67,7 @@ export async function POST(request: Request) {
         countryCode: geo.countryCode,
         category,
         radiusKm,
+        maxLeads,
       },
     });
 
@@ -79,8 +83,12 @@ export async function POST(request: Request) {
       });
       const seen = new Set(existing.map((row) => row.osmId));
       let fresh = pois.filter((poi) => !seen.has(poi.osmId));
-      limitReached = fresh.length > quota.remaining;
-      if (limitReached) fresh = fresh.slice(0, quota.remaining);
+      const effectiveLimit = Math.min(maxLeads, quota.remaining);
+      limitReached = fresh.length > effectiveLimit;
+      if (limitReached) fresh = fresh.slice(0, effectiveLimit);
+      if (!limitReached && fresh.length > maxLeads) {
+        fresh = fresh.slice(0, maxLeads);
+      }
 
       if (fresh.length) {
         await db.lead.createMany({

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/workspace";
-import { startEnrichmentJob } from "@/lib/enrich-worker";
+import { inngest } from "@/inngest/client";
 
 const bodySchema = z.object({
   leadIds: z.array(z.string()).min(1).max(500).optional(),
@@ -61,7 +61,10 @@ export async function POST(request: Request) {
     },
   });
 
-  startEnrichmentJob(job.id);
+  await inngest.send({
+    name: "enrich/run",
+    data: { jobId: job.id },
+  });
 
   return NextResponse.json({
     jobId: job.id,

@@ -54,9 +54,9 @@ export async function POST(request: Request) {
       metadata: { userId: user?.id ?? "", targetPlan: targetPlan ?? "GROWTH" },
     });
     return NextResponse.json({ url: checkout.url });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Polar checkout failed:", JSON.stringify(error, null, 2));
-    const message = error?.message ?? "Could not start checkout";
-    return NextResponse.json({ error: message, status: error?.statusCode }, { status: 502 });
+    const message = error instanceof Error ? error.message : "Could not start checkout";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
 }
