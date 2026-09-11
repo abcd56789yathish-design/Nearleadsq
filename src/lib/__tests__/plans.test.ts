@@ -37,13 +37,13 @@ describe("isPaidPlan", () => {
 
 describe("planForProductId", () => {
   it("returns GROWTH for matching product ID", () => {
-    process.env.POLAR_PRODUCT_GROWTH = "prod_growth_123";
-    expect(planForProductId("prod_growth_123")).toBe("GROWTH");
+    process.env.DODO_PRODUCT_GROWTH = "pdt_growth_123";
+    expect(planForProductId("pdt_growth_123")).toBe("GROWTH");
   });
 
   it("returns AGENCY for matching product ID", () => {
-    process.env.POLAR_PRODUCT_AGENCY = "prod_agency_456";
-    expect(planForProductId("prod_agency_456")).toBe("AGENCY");
+    process.env.DODO_PRODUCT_AGENCY = "pdt_agency_456";
+    expect(planForProductId("pdt_agency_456")).toBe("AGENCY");
   });
 
   it("returns FREE for unknown product ID", () => {

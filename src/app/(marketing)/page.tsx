@@ -71,10 +71,6 @@ const STEPS = [
 
 const FAQS = [
   {
-    q: "Where does the business data come from?",
-    a: "OpenStreetMap, the collaborative world map used by millions. We query it live for every search, so results reflect the map as it exists today rather than a stale database.",
-  },
-  {
     q: "How fresh is the data?",
     a: "Every search runs against OpenStreetMap in real time. Nothing is cached between searches, so a listing added yesterday can appear in today's results.",
   },
@@ -150,7 +146,7 @@ export default async function LandingPage() {
             Built for agencies, freelancers and local sales teams
           </p>
           <h1 className="mt-6 max-w-[680px] bg-gradient-to-r from-black to-[#666666] bg-clip-text text-4xl leading-tight font-bold tracking-tight text-transparent md:text-6xl dark:from-white dark:to-[#9b9b9b]">
-            Find local businesses missing websites, emails.
+            Find businesses that need your service and reach them instantly.
           </h1>
           <p className="mt-6 max-w-[680px] text-base text-muted-foreground md:text-lg">
             NearLeadsQ scans every business around your chosen location, flags the ones

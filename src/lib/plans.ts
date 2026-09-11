@@ -87,10 +87,10 @@ export function isPaidPlan(plan: Plan): boolean {
   return plan === "GROWTH" || plan === "AGENCY";
 }
 
-/** Map a Polar product ID to a plan tier. */
+/** Map a Dodo product ID to a plan tier. */
 export function planForProductId(productId: string): Plan {
-  if (productId === process.env.POLAR_PRODUCT_GROWTH) return "GROWTH";
-  if (productId === process.env.POLAR_PRODUCT_AGENCY) return "AGENCY";
+  if (productId === process.env.DODO_PRODUCT_GROWTH) return "GROWTH";
+  if (productId === process.env.DODO_PRODUCT_AGENCY) return "AGENCY";
   return "FREE";
 }
 

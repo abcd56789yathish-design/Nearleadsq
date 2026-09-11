@@ -40,8 +40,8 @@ const RATE_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   "/api/search": { limit: 10, windowMs: 60_000 },
   "/api/leads/import": { limit: 5, windowMs: 60_000 },
   "/api/enrich": { limit: 5, windowMs: 60_000 },
-  "/api/polar/checkout": { limit: 5, windowMs: 60_000 },
-  "/api/polar/portal": { limit: 10, windowMs: 60_000 },
+  "/api/dodo/checkout": { limit: 5, windowMs: 60_000 },
+  "/api/dodo/portal": { limit: 10, windowMs: 60_000 },
   "/api/templates": { limit: 30, windowMs: 60_000 },
 };
 

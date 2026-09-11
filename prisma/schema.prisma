@@ -8,13 +8,13 @@ datasource db {
 }
 
 model User {
-  id               String     @id @default(cuid())
-  email            String     @unique
-  passwordHash     String
-  name             String?
-  plan             String     @default("FREE") // FREE | GROWTH | AGENCY
-  polarCustomerId  String?
-  createdAt        DateTime   @default(now())
+  id             String     @id @default(cuid())
+  email          String     @unique
+  passwordHash   String?
+  name           String?
+  plan           String     @default("FREE") // FREE | GROWTH | AGENCY
+  dodoCustomerId String?  @unique
+  createdAt      DateTime   @default(now())
   searches         Search[]
   leads            Lead[]
   templates        Template[]

@@ -17,7 +17,7 @@ export default function PrivacyPage() {
           <ul className="mt-2 space-y-1.5">
             <li><strong className="text-foreground">Account data:</strong> your email address, name (optional) and a securely hashed password.</li>
             <li><strong className="text-foreground">Usage data:</strong> searches you run, leads you save, templates you create and plan/usage information required to operate the service.</li>
-            <li><strong className="text-foreground">Billing data:</strong> handled by Polar. We never see or store your full card details; we only keep a Polar customer reference.</li>
+            <li><strong className="text-foreground">Billing data:</strong> handled by Dodo Payments. We never see or store your full card details; we only keep a Dodo customer reference.</li>
           </ul>
         </section>
 

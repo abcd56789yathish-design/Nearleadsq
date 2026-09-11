@@ -14,12 +14,13 @@ export function BillingActions({
 }) {
   const [pending, setPending] = useState<"checkout" | "portal" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const isPaid = plan === "GROWTH" || plan === "AGENCY";
 
   async function call(kind: "checkout" | "portal", targetPlan?: string) {
     setPending(kind);
     setError(null);
     try {
-      const res = await fetch(`/api/polar/${kind}`, {
+      const res = await fetch(`/api/dodo/${kind}`, {
         method: "POST",
         ...(kind === "checkout" && targetPlan
           ? { body: JSON.stringify({ targetPlan }), headers: { "Content-Type": "application/json" } }
@@ -42,9 +43,9 @@ export function BillingActions({
     return (
       <p className="rounded-md bg-warning/10 px-3 py-2 text-sm text-warning">
         Billing isn&apos;t configured on this deployment yet — set{" "}
-        <code className="font-mono">POLAR_ACCESS_TOKEN</code>,{" "}
-        <code className="font-mono">POLAR_PRODUCT_GROWTH</code>, and{" "}
-        <code className="font-mono">POLAR_PRODUCT_AGENCY</code> to enable upgrades.
+        <code className="font-mono">DODO_API_KEY</code>,{" "}
+        <code className="font-mono">DODO_PRODUCT_GROWTH</code>, and{" "}
+        <code className="font-mono">DODO_PRODUCT_AGENCY</code> to enable upgrades.
       </p>
     );
   }
@@ -64,19 +65,7 @@ export function BillingActions({
             </Button>
           </>
         )}
-        {plan === "GROWTH" && (
-          <>
-            <Button variant="outline" pending={pending === "portal"} onClick={() => call("portal")}>
-              <ExternalLink />
-              Manage subscription
-            </Button>
-            <Button pending={pending === "checkout"} onClick={() => call("checkout", "AGENCY")}>
-              <Zap />
-              Upgrade to Agency — $79/mo
-            </Button>
-          </>
-        )}
-        {plan === "AGENCY" && (
+        {isPaid && (
           <Button variant="outline" pending={pending === "portal"} onClick={() => call("portal")}>
             <ExternalLink />
             Manage subscription

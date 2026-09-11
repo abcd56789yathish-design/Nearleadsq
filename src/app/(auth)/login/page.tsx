@@ -1,24 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/textarea";
-import { logIn, type AuthState } from "@/app/actions/auth-actions";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" pending={pending} className="w-full">
-      Sign in
-    </Button>
-  );
-}
 
 export default function LoginPage() {
-  const [state, action] = useActionState<AuthState, FormData>(logIn, undefined);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  async function handleGoogle() {
+    setPending(true);
+    setError(null);
+    try {
+      await signIn("google", { redirectTo: "/dashboard" });
+    } catch {
+      setError("Google sign-in failed — please try again.");
+      setPending(false);
+    }
+  }
 
   return (
     <div className="w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-xs">
@@ -26,35 +26,22 @@ export default function LoginPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Sign in to your NearLeadsQ account
       </p>
-      <form action={action} className="mt-6 flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="you@company.com"
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-          />
-        </div>
-        {state?.error && (
+      <div className="mt-6 flex flex-col gap-4">
+        <Button
+          type="button"
+          className="w-full"
+          pending={pending}
+          onClick={handleGoogle}
+        >
+          <GoogleIcon />
+          Continue with Google
+        </Button>
+        {error && (
           <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {state.error}
+            {error}
           </p>
         )}
-        <SubmitButton />
-      </form>
+      </div>
       <p className="mt-4 text-center text-sm text-muted-foreground">
         No account?{" "}
         <Link
@@ -65,5 +52,28 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"
+      />
+    </svg>
   );
 }

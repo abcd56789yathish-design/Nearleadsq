@@ -79,7 +79,7 @@ fire-and-forget inside a serverless function). On Vercel:
 
 - Push and import the repo into Vercel.
 - Add env vars: `DATABASE_URL`, `AUTH_SECRET`, `INNGEST_SIGNING_KEY`,
-  `INNGEST_EVENT_KEY` (plus Polar vars if enabled).
+  `INNGEST_EVENT_KEY` (plus Dodo vars if enabled).
 - Run `npx prisma db push` once from your machine/CI against the prod DB.
 
 **Docker / VPS (non-serverless):**
@@ -98,10 +98,12 @@ docker exec <container> npx prisma db push
 
 - `DATABASE_URL`, `AUTH_SECRET` — required
 - `INNGEST_SIGNING_KEY`, `INNGEST_EVENT_KEY` — required for enrichment
-- Billing (optional): `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`,
-  `POLAR_PRODUCT_GROWTH`, `POLAR_PRODUCT_AGENCY`, `POLAR_SERVER`;
-  point a Polar webhook at `/api/polar/webhook` (events:
-  `subscription.created`, `subscription.updated`, `subscription.canceled`)
+- Billing (optional): `DODO_API_KEY`, `DODO_WEBHOOK_SECRET`,
+  `DODO_PRODUCT_GROWTH`, `DODO_PRODUCT_AGENCY`, `DODO_ENV`;
+  point a Dodo webhook at `/api/dodo/webhook` (events:
+  `subscription.active`, `subscription.updated`, `subscription.plan_changed`,
+  `subscription.renewed`, `subscription.cancelled`, `subscription.on_hold`,
+  `subscription.failed`, `subscription.expired`)
 
 ## Compliance notes
 

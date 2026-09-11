@@ -15,11 +15,10 @@
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
-    "@polar-sh/nextjs": "^0.9.6",
     "@prisma/client": "^6.19.3",
     "@sentry/nextjs": "^10.71.0",
-    "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
+    "dodopayments": "^2.50.0",
     "inngest": "^4.20.0",
     "libphonenumber-js": "^1.13.11",
     "lucide-react": "^1.33.0",
@@ -27,12 +26,12 @@
     "next-auth": "^5.0.0-beta.32",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "standardwebhooks": "^1.1.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

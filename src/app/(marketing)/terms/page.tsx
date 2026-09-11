@@ -49,7 +49,7 @@ export default function TermsPage() {
           <h2>4. Accounts & billing</h2>
           <p className="mt-2">
             You are responsible for keeping your credentials secure. Paid subscriptions
-            renew monthly until cancelled and are billed through Polar; cancellations take
+            renew monthly until cancelled and are billed through Dodo Payments; cancellations take
             effect at the end of the current billing period. We may change pricing with
             reasonable notice; active subscriptions keep their rate until renewal after the
             change.
