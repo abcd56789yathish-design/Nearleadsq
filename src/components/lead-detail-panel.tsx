@@ -92,13 +92,13 @@ export function LeadDetailPanel({
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="lead-followup">Follow-up</Label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Input
               id="lead-followup"
               type="date"
               value={followUp}
               onChange={(e) => setFollowUp(e.target.value)}
-              className="w-44"
+              className="w-40 sm:w-44"
             />
             {followUp !== toDateInputValue(lead.followUpAt) && (
               <>

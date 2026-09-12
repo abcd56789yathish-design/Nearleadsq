@@ -152,9 +152,9 @@ export function TemplatesManager({
             </Card>
           ) : (
             <Card key={template.id}>
-              <CardHeader className="flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-base">{template.name}</CardTitle>
-                <span className="flex gap-1">
+              <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
+                <CardTitle className="min-w-0 truncate text-base">{template.name}</CardTitle>
+                <span className="flex shrink-0 items-center gap-1">
                   <Button
                     variant="ghost"
                     size="icon"

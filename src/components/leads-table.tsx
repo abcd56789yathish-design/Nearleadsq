@@ -337,7 +337,7 @@ export function LeadsTable({
           <Upload />
         </Button>
 
-        <div className="ml-auto flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="ml-auto flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           {data && (
             <span>
               {data.total.toLocaleString()} lead{data.total === 1 ? "" : "s"}

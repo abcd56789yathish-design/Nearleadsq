@@ -129,12 +129,12 @@ export function EnrichmentTaskRows({ job }: { job: EnrichmentJobView }) {
 
       <ul className="mt-2.5 divide-y divide-border/60">
         {rows.map(({ key, icon: Icon, label, meta, meterPct, state }) => (
-          <li key={key} className="flex items-center gap-2.5 py-2 text-sm">
+          <li key={key} className="flex flex-wrap items-center gap-2.5 py-2 text-sm">
             <RowGlyph state={state} />
             <Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
             <span
               className={cn(
-                "min-w-0 truncate",
+                "min-w-0 flex-1 truncate",
                 state === "queued" ? "text-muted-foreground" : undefined
               )}
             >

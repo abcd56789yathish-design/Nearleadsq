@@ -131,7 +131,7 @@ export function SearchesGrid() {
           <Card key={search.id} className="relative flex flex-col transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="truncate text-base">{search.query}</CardTitle>
-              <CardDescription className="flex items-center gap-2 text-xs">
+              <CardDescription className="flex flex-wrap items-center gap-2 text-xs">
                 <span>{categoryLabel(search.category)}</span>
                 <span className="text-border">·</span>
                 <span>{search.radiusKm} km</span>

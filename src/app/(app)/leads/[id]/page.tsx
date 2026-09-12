@@ -149,9 +149,9 @@ export default async function LeadDetailPage({
               ) : (
                 <ul className="flex flex-col gap-2.5 text-sm">
                   {details.map((detail, i) => (
-                    <li key={i} className="flex items-center gap-2.5">
-                      <detail.icon className="size-4 shrink-0 text-muted-foreground" />
-                      {detail.content}
+                    <li key={i} className="flex items-start gap-2.5">
+                      <detail.icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      <span className="min-w-0 break-words">{detail.content}</span>
                     </li>
                   ))}
                 </ul>
